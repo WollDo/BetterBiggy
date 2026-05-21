@@ -11,12 +11,11 @@ async function fetchRates() {
     const btcUsd   = btcData.bitcoin.usd;
     const allRates = { ...fxData.rates, USD: 1 };
 
-    // usdRate for the currently selected currency — used by content.js
     const { targetCurrency } = await chrome.storage.local.get("targetCurrency");
     const usdRate = targetCurrency ? (allRates[targetCurrency] ?? 1) : 1;
 
     await chrome.storage.local.set({ btcUsd, usdRate, allRates, lastUpdated: Date.now() });
-    console.log(`Rates updated: BTC=$${btcUsd}`);
+    console.log("Rates updated: BTC=$" + btcUsd);
   } catch (e) {
     console.error("Rate fetch failed:", e);
   }
@@ -48,7 +47,6 @@ chrome.alarms.onAlarm.addListener(alarm => {
   if (alarm.name === "refreshCurrencies") fetchCurrencyList();
 });
 
-// When currency changes, derive usdRate from allRates (no extra API call)
 chrome.storage.onChanged.addListener(changes => {
   if (!changes.targetCurrency) return;
   const code = changes.targetCurrency.newValue;
@@ -56,7 +54,7 @@ chrome.storage.onChanged.addListener(changes => {
     if (allRates && code) {
       chrome.storage.local.set({ usdRate: allRates[code] ?? 1 });
     } else {
-      fetchRates(); // fallback if allRates not cached yet
+      fetchRates();
     }
   });
 });

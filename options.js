@@ -35,7 +35,7 @@ function setFreshness(lastUpdated) {
 
 // ── Status bar ───────────────────────────────────────────────────────────────
 function updateStatus() {
-  const el = document.getElementById("statusBar");
+  const el = document.getElementById("statusText");
   if (!targetCurrency) { el.innerHTML = "No currency selected"; return; }
   const name = allCurrencies[targetCurrency] ?? targetCurrency;
   el.innerHTML = "Showing prices in <strong>" + targetCurrency + "</strong> \u2014 " + name;
@@ -121,12 +121,15 @@ function selectCurrency(code) {
 // ── Load ─────────────────────────────────────────────────────────────────────
 function loadData() {
   chrome.storage.local.get(
-    ["currencies", "targetCurrency", "btcUsd", "allRates", "lastUpdated"],
+    ["currencies", "targetCurrency", "btcUsd", "allRates", "lastUpdated", "imageSize"],
     data => {
       allCurrencies  = data.currencies  ?? {};
       targetCurrency = data.targetCurrency ?? null;
       btcUsd         = data.btcUsd     ?? null;
       allRates       = data.allRates   ?? {};
+      const imgSize = data.imageSize ?? 50;
+      document.getElementById("imageSizeSlider").value = imgSize;
+      document.getElementById("imageSizeVal").textContent = imgSize + "%";
 
       if (btcUsd) {
         document.getElementById("btcPrice").textContent = "$" + btcUsd.toLocaleString();
@@ -169,3 +172,10 @@ document.getElementById("refreshBtn").addEventListener("click", () => {
 });
 
 loadData();
+
+document.getElementById('imageSizeSlider').addEventListener('input', function() {
+  const val = parseInt(this.value);
+  document.getElementById('imageSizeVal').textContent = val + '%';
+  chrome.storage.local.set({ imageSize: val });
+});
+});

@@ -8,10 +8,11 @@ const SYMBOLS = {
 
 const PINNED = ["GBP", "EUR", "USD"];
 
-let allCurrencies = {};
-let allRates      = {};
-let btcUsd        = null;
+let allCurrencies  = {};
+let allRates       = {};
+let btcUsd         = null;
 let targetCurrency = null;
+let darkMode       = true;
 
 function getSymbol(code) { return SYMBOLS[code] ?? code + " "; }
 
@@ -29,81 +30,57 @@ function btcToLocal(code) {
   return getSymbol(code) + val.toLocaleString(undefined, { maximumFractionDigits: 0 });
 }
 
-// ── Freshness ────────────────────────────────────────────────────────────────
 function setFreshness(lastUpdated) {
-  const dot   = document.getElementById("fDot");
-  const label = document.getElementById("fLabel");
-  if (!lastUpdated) { label.textContent = "no rates"; return; }
+  const dot = document.getElementById("fDot");
+  const lbl = document.getElementById("fLabel");
+  if (!lastUpdated) { lbl.textContent = "no rates"; return; }
   const mins = Math.floor((Date.now() - lastUpdated) / 60000);
-  const cls  = mins < 60 ? "fresh" : mins < 120 ? "stale" : "old";
-  const text = mins < 1 ? "live" : mins < 60 ? mins + "m ago" : Math.floor(mins / 60) + "h ago";
-  dot.className = "f-dot " + cls;
-  label.textContent = text;
+  dot.className = "f-dot " + (mins < 60 ? "fresh" : mins < 120 ? "stale" : "old");
+  lbl.textContent = mins < 1 ? "live" : mins < 60 ? mins + "m ago" : Math.floor(mins/60) + "h ago";
 }
 
-// ── Selected-currency header ─────────────────────────────────────────────────
 function updateSelBlock() {
   const block = document.getElementById("selBlock");
-  const val   = document.getElementById("selValue");
-  const lbl   = document.getElementById("selLabel");
-  if (!targetCurrency || !btcUsd || !allRates[targetCurrency]) {
-    block.style.display = "none";
-    return;
-  }
+  if (!targetCurrency || !btcUsd || !allRates[targetCurrency]) { block.style.display = "none"; return; }
   block.style.display = "block";
-  val.textContent = btcToLocal(targetCurrency);
-  lbl.textContent = "1 BTC in " + targetCurrency;
+  document.getElementById("selValue").textContent = btcToLocal(targetCurrency);
+  document.getElementById("selLabel").textContent = "1 BTC in " + targetCurrency;
 }
 
-// ── Progress strip ───────────────────────────────────────────────────────────
 function updateProgress(progress) {
   const strip = document.getElementById("progressStrip");
   const fill  = document.getElementById("progressFill");
   if (!progress) { strip.classList.remove("visible"); return; }
-  const { done, total } = progress;
   strip.classList.add("visible");
-  fill.style.width = (total > 0 ? (done / total) * 100 : 0) + "%";
-  if (done >= total) setTimeout(() => strip.classList.remove("visible"), 1400);
+  fill.style.width = (progress.total > 0 ? (progress.done / progress.total) * 100 : 0) + "%";
+  if (progress.done >= progress.total) setTimeout(() => strip.classList.remove("visible"), 1400);
 }
 
-// ── Render list ──────────────────────────────────────────────────────────────
 function makeItem(code, name) {
   const active = code === targetCurrency ? "active" : "";
-  const val    = btcToLocal(code);
   return '<div class="c-item ' + active + '" data-code="' + code + '">' +
     '<span class="c-code">' + code + '</span>' +
     '<span class="c-name">' + name + '</span>' +
-    '<span class="c-val">'  + val  + '</span>' +
+    '<span class="c-val">'  + btcToLocal(code) + '</span>' +
     '</div>';
 }
 
 function renderList(filter) {
   filter = (filter || "").toLowerCase();
   const list = document.getElementById("currencyList");
-
-  const matching = Object.entries(allCurrencies).filter(([code, name]) =>
-    code.toLowerCase().includes(filter) || name.toLowerCase().includes(filter)
+  const matching = Object.entries(allCurrencies).filter(([c, n]) =>
+    c.toLowerCase().includes(filter) || n.toLowerCase().includes(filter)
   );
-
-  if (matching.length === 0) {
-    list.innerHTML = '<div class="no-results">No currencies found</div>';
-    return;
-  }
+  if (!matching.length) { list.innerHTML = '<div class="no-results">No currencies found</div>'; return; }
 
   let html = "";
-
   if (!filter) {
     const pinned = matching.filter(([c]) => PINNED.includes(c)).sort(pinnedSort);
     const rest   = matching.filter(([c]) => !PINNED.includes(c)).sort(([a],[b]) => a.localeCompare(b));
-
-    html += '<div class="sec-head">Popular</div>';
-    html += pinned.map(([c, n]) => makeItem(c, n)).join("");
-    if (rest.length) {
-      html += '<div class="sec-div"></div><div class="sec-head">All currencies</div>';
-      html += rest.map(([c, n]) => makeItem(c, n)).join("");
-    }
+    html += '<div class="sec-head">Popular</div>' + pinned.map(([c,n]) => makeItem(c,n)).join("");
+    if (rest.length) html += '<div class="sec-div"></div><div class="sec-head">All currencies</div>' + rest.map(([c,n]) => makeItem(c,n)).join("");
   } else {
-    html += [...matching].sort(pinnedSort).map(([c, n]) => makeItem(c, n)).join("");
+    html = [...matching].sort(pinnedSort).map(([c,n]) => makeItem(c,n)).join("");
   }
 
   list.innerHTML = html;
@@ -121,40 +98,43 @@ function selectCurrency(code) {
   if (active) active.scrollIntoView({ block: "nearest" });
 }
 
-// ── Init ─────────────────────────────────────────────────────────────────────
+function applyTheme(isDark) {
+  darkMode = isDark;
+  chrome.storage.local.set({ darkMode: isDark });
+  document.getElementById("themeDark").classList.toggle("active", isDark);
+  document.getElementById("themeLight").classList.toggle("active", !isDark);
+}
+
+document.getElementById("themeDark").addEventListener("click",  () => applyTheme(true));
+document.getElementById("themeLight").addEventListener("click", () => applyTheme(false));
+document.getElementById("search").addEventListener("input", e => renderList(e.target.value));
+document.getElementById("openOptions").addEventListener("click", () => chrome.runtime.openOptionsPage());
+
 chrome.storage.onChanged.addListener(changes => {
   if (changes.convProgress) updateProgress(changes.convProgress.newValue);
 });
 
 chrome.storage.local.get(
-  ["currencies", "targetCurrency", "btcUsd", "allRates", "lastUpdated", "convProgress"],
+  ["currencies", "targetCurrency", "btcUsd", "allRates", "lastUpdated", "convProgress", "darkMode"],
   data => {
     allCurrencies  = data.currencies  ?? {};
     targetCurrency = data.targetCurrency ?? null;
     btcUsd         = data.btcUsd     ?? null;
     allRates       = data.allRates   ?? {};
+    darkMode       = data.darkMode   !== false;
 
-    if (btcUsd) {
-      document.getElementById("btcPrice").textContent = "$" + btcUsd.toLocaleString();
-    }
-
+    if (btcUsd) document.getElementById("btcPrice").textContent = "$" + btcUsd.toLocaleString();
     setFreshness(data.lastUpdated ?? null);
     updateSelBlock();
     if (data.convProgress) updateProgress(data.convProgress);
 
-    renderList("");
+    document.getElementById("themeDark").classList.toggle("active", darkMode);
+    document.getElementById("themeLight").classList.toggle("active", !darkMode);
 
+    renderList("");
     setTimeout(() => {
       const active = document.querySelector(".c-item.active");
       if (active) active.scrollIntoView({ block: "center" });
     }, 50);
   }
 );
-
-document.getElementById("search").addEventListener("input", e => renderList(e.target.value));
-document.getElementById("openOptions").addEventListener("click", () => chrome.runtime.openOptionsPage());
-
-// Auto-focus search when popup opens
-document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("search").focus();
-});

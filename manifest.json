@@ -3,7 +3,7 @@
   "name": "BetterBiggy",
   "version": "2.1",
   "description": "A utility mod for LittleBiggy. Dark theme, currency conversion, and more.",
-  "permissions": ["storage", "alarms"],
+  "permissions": ["storage", "alarms", "tabs"],
   "host_permissions": [
     "https://littlebiggy.org/*",
     "https://www.littlebiggy.org/*",
@@ -47,7 +47,7 @@
     }
   ],
   "web_accessible_resources": [{
-    "resources": ["betterbiggy.css"],
+    "resources": ["betterbiggy.css", "onboarding.html", "onboarding.js"],
     "matches": [
       "https://littlebiggy.org/*",
       "https://www.littlebiggy.org/*",

@@ -1,21 +1,18 @@
 const SYMBOLS = {
-  USD:"$", GBP:"£", EUR:"€", JPY:"¥", CAD:"CA$", AUD:"A$",
-  CHF:"Fr", CNY:"¥", HKD:"HK$", SGD:"S$", SEK:"kr", NOK:"kr",
-  DKK:"kr", NZD:"NZ$", MXN:"MX$", BRL:"R$", INR:"₹", KRW:"₩",
-  ZAR:"R", TRY:"₺", PLN:"zł", CZK:"Kč", HUF:"Ft", ILS:"₪",
-  AED:"د.إ", THB:"฿", MYR:"RM", PHP:"₱", IDR:"Rp"
+  USD:"$", GBP:"\u00a3", EUR:"\u20ac", JPY:"\u00a5", CAD:"CA$", AUD:"A$",
+  CHF:"Fr", CNY:"\u00a5", HKD:"HK$", SGD:"S$", SEK:"kr", NOK:"kr",
+  DKK:"kr", NZD:"NZ$", MXN:"MX$", BRL:"R$", INR:"\u20b9", KRW:"\u20a9",
+  ZAR:"R", TRY:"\u20ba", PLN:"z\u0142", CZK:"K\u010d", HUF:"Ft", ILS:"\u20aa",
+  AED:"\u062f.\u0625", THB:"\u0e3f", MYR:"RM", PHP:"\u20b1", IDR:"Rp"
 };
 
-const BATCH_SIZE = 10;
-const BATCH_DELAY = 120;
+const BATCH_SIZE = 100;
+const BATCH_DELAY = 16;
 
 function getSymbol(code) {
   return SYMBOLS[code] ?? code + " ";
 }
 
-// Walk up from btcEl until we find an ancestor that also contains
-// span.price.USD. Handles pages where BTC is nested deeper than USD
-// (e.g. inside a payment-methods div) as well as sibling layouts.
 function findUsdSibling(btcEl) {
   let node = btcEl.parentElement;
   while (node && node !== document.body) {
@@ -39,10 +36,19 @@ function getPairs() {
   return pairs;
 }
 
-let observer;
-let isConverting = false;
+function clearConverted() {
+  document.querySelectorAll('span.price.USD[data-converted]').forEach(el => {
+    delete el.dataset.converted;
+  });
+}
 
-function processQueue(pairs, btcUsd, usdRate, targetCurrency, offset, total, onDone) {
+let observer;
+let conversionId = 0; // increment to cancel any running conversion
+
+function processQueue(id, pairs, btcUsd, usdRate, targetCurrency, offset, total) {
+  // If a newer conversion has started, stop immediately
+  if (id !== conversionId) return;
+
   const symbol = getSymbol(targetCurrency);
   const batch = pairs.slice(offset, offset + BATCH_SIZE);
 
@@ -56,32 +62,43 @@ function processQueue(pairs, btcUsd, usdRate, targetCurrency, offset, total, onD
   chrome.storage.local.set({ convProgress: { done, total } });
 
   if (done < total) {
-    setTimeout(() => processQueue(pairs, btcUsd, usdRate, targetCurrency, offset + BATCH_SIZE, total, onDone), BATCH_DELAY);
+    setTimeout(() => processQueue(id, pairs, btcUsd, usdRate, targetCurrency, offset + BATCH_SIZE, total), BATCH_DELAY);
   } else {
     setTimeout(() => {
-      chrome.storage.local.remove("convProgress");
-      if (onDone) onDone();
-    }, 2000);
+      if (id === conversionId) chrome.storage.local.remove("convProgress");
+    }, 1500);
   }
 }
 
 function startConversion(btcUsd, usdRate, targetCurrency) {
-  if (isConverting) return;
-  const pairs = getPairs();
-  if (pairs.length === 0) return;
+  // Cancel any running conversion by bumping the ID
+  const id = ++conversionId;
 
   if (observer) observer.disconnect();
-  isConverting = true;
+
+  const pairs = getPairs();
+  if (pairs.length === 0) {
+    if (observer) observer.observe(document.body, { childList: true, subtree: true });
+    return;
+  }
 
   chrome.storage.local.set({ convProgress: { done: 0, total: pairs.length } });
-  processQueue(pairs, btcUsd, usdRate, targetCurrency, 0, pairs.length, () => {
-    isConverting = false;
-    if (observer) {
-      observer.observe(document.body, { childList: true, subtree: true });
-    }
+  processQueue(id, pairs, btcUsd, usdRate, targetCurrency, 0, pairs.length);
+
+  // Reconnect observer after first batch has a chance to start
+  setTimeout(() => {
+    if (observer) observer.observe(document.body, { childList: true, subtree: true });
+  }, 50);
+}
+
+function getAndConvert() {
+  chrome.storage.local.get(["targetCurrency", "btcUsd", "usdRate"], ({ targetCurrency, btcUsd, usdRate }) => {
+    if (!targetCurrency || !btcUsd || !usdRate) return;
+    startConversion(btcUsd, usdRate, targetCurrency);
   });
 }
 
+// Initial conversion on page load
 chrome.storage.local.get(["targetCurrency", "btcUsd", "usdRate"], ({ targetCurrency, btcUsd, usdRate }) => {
   if (!targetCurrency || !btcUsd || !usdRate) return;
 
@@ -89,7 +106,6 @@ chrome.storage.local.get(["targetCurrency", "btcUsd", "usdRate"], ({ targetCurre
 
   let mutationDebounce;
   observer = new MutationObserver((mutations) => {
-    if (isConverting) return;
     const relevant = mutations.some(m =>
       [...m.addedNodes].some(n =>
         n.nodeType === Node.ELEMENT_NODE && (
@@ -100,26 +116,30 @@ chrome.storage.local.get(["targetCurrency", "btcUsd", "usdRate"], ({ targetCurre
     );
     if (!relevant) return;
     clearTimeout(mutationDebounce);
-    mutationDebounce = setTimeout(() => startConversion(btcUsd, usdRate, targetCurrency), 400);
+    mutationDebounce = setTimeout(getAndConvert, 400);
   });
   observer.observe(document.body, { childList: true, subtree: true });
 
   let scrollDebounce;
   window.addEventListener('scroll', () => {
-    if (isConverting) return;
     clearTimeout(scrollDebounce);
-    scrollDebounce = setTimeout(() => startConversion(btcUsd, usdRate, targetCurrency), 600);
+    scrollDebounce = setTimeout(getAndConvert, 600);
   }, { passive: true });
 });
 
-// ── Keyword search: make input directly clickable ────────────
-// The site requires clicking the "keyword" button to activate the input.
-// This intercepts clicks on the disabled input and triggers the button first.
+// Re-convert immediately when currency changes in the popup
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area !== 'local') return;
+  if (!changes.targetCurrency && !changes.usdRate && !changes.btcUsd) return;
+  clearConverted();
+  getAndConvert();
+});
+
+// Keyword search: make input directly clickable
 document.addEventListener('click', function(e) {
   const input = e.target.closest('input[data-search-is-active="false"]');
   if (!input) return;
 
-  // Find the keyword button — walk up to the filter container then search
   const filterBar = input.closest('[class*="filters_"]') ??
                     input.closest('[class*="wall_"]') ??
                     document.querySelector('[class*="filters_button-filters"]');

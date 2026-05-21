@@ -428,3 +428,56 @@ input::placeholder, textarea::placeholder {
 [class*="wall_image-container"] {
   margin-bottom: 6px !important;
 }
+
+/* ── Header nav cleanup ───────────────────────────────────── */
+
+/* utility row (settings / logout / help) */
+#header .header-primo .header-element a {
+  font-size: 10px !important;
+  color: #555 !important;
+  letter-spacing: 0.3px !important;
+}
+#header .header-primo .header-element a:hover { color: #f7931a !important; }
+
+/* main nav tabs (topics / people / items) */
+#header .header-gundo .header-element a.gogo {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  color: #ddd !important;
+  padding-bottom: 3px !important;
+  border-bottom: 2px solid transparent !important;
+  transition: color 0.15s, border-color 0.15s !important;
+}
+#header .header-gundo .header-element a.gogo:hover {
+  color: #f7931a !important;
+  border-bottom-color: #f7931a55 !important;
+  text-decoration: none !important;
+}
+
+/* filter pills - ONLY inside the header */
+#header .header-trin .header-element a.gogo {
+  font-size: 11px !important;
+  color: #999 !important;
+  background: #141414 !important;
+  border: 1px solid #252525 !important;
+  border-radius: 10px !important;
+  padding: 2px 9px !important;
+  display: inline-block !important;
+  transition: all 0.15s !important;
+}
+#header .header-trin .header-element a.gogo:hover {
+  color: #f7931a !important;
+  border-color: #f7931a44 !important;
+  text-decoration: none !important;
+}
+
+/* sidebar */
+#header .leroy a { font-size: 11px !important; color: #888 !important; display: block !important; line-height: 1.8 !important; }
+#header .leroy a:hover { color: #f7931a !important; }
+
+[data-is-fullscreen="false"] img {
+  max-height: 120px !important;
+  width: 100% !important;
+  object-fit: cover !important;
+  object-position: center !important;
+}
