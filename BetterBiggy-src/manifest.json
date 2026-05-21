@@ -47,7 +47,7 @@
     }
   ],
   "web_accessible_resources": [{
-    "resources": ["betterbiggy.css", "onboarding.html", "onboarding.js"],
+    "resources": ["betterbiggy.css"],
     "matches": [
       "https://littlebiggy.org/*",
       "https://www.littlebiggy.org/*",

@@ -135,24 +135,16 @@ chrome.storage.onChanged.addListener((changes, area) => {
   getAndConvert();
 });
 
-// Keyword search: make input directly clickable
-document.addEventListener('click', function(e) {
-  const input = e.target.closest('input[data-search-is-active="false"]');
-  if (!input) return;
+// Add placeholder hint to the keyword search input
+function patchSearchInput() {
+  document.querySelectorAll('input[data-search-is-active="false"]').forEach(input => {
+    if (!input.dataset.bbHinted) {
+      input.placeholder = "click keyword to search";
+      input.dataset.bbHinted = "true";
+    }
+  });
+}
 
-  const filterBar = input.closest('[class*="filters_"]') ??
-                    input.closest('[class*="wall_"]') ??
-                    document.querySelector('[class*="filters_button-filters"]');
-
-  const btn = filterBar
-    ? [...filterBar.querySelectorAll('button')].find(b => b.textContent.trim().toLowerCase() === 'keyword')
-    : [...document.querySelectorAll('button')].find(b => b.textContent.trim().toLowerCase() === 'keyword');
-
-  if (btn) {
-    btn.click();
-    setTimeout(() => {
-      const active = document.querySelector('input[data-search-is-active="true"]') ?? input;
-      active.focus();
-    }, 80);
-  }
-}, true);
+patchSearchInput();
+const searchObserver = new MutationObserver(patchSearchInput);
+searchObserver.observe(document.body, { childList: true, subtree: true });

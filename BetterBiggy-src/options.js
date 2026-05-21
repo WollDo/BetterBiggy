@@ -178,4 +178,3 @@ document.getElementById('imageSizeSlider').addEventListener('input', function() 
   document.getElementById('imageSizeVal').textContent = val + '%';
   chrome.storage.local.set({ imageSize: val });
 });
-});

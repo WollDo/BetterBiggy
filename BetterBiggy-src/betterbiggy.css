@@ -432,21 +432,32 @@ input::placeholder, textarea::placeholder {
 /* ── Header nav cleanup ───────────────────────────────────── */
 
 /* utility row (settings / logout / help) */
-#header .header-primo .header-element a {
-  font-size: 10px !important;
+#header .header-primo .header-element a,
+#header .header-primo .header-element a.gogo,
+#header .header-primo .header-element a.gogo:link,
+#header .header-primo .header-element a.gogo:visited {
   color: #555 !important;
-  letter-spacing: 0.3px !important;
+  font-size: 11px !important;
+  letter-spacing: 0.2px !important;
 }
 #header .header-primo .header-element a:hover { color: #f7931a !important; }
 
 /* main nav tabs (topics / people / items) */
-#header .header-gundo .header-element a.gogo {
-  font-size: 15px !important;
+#header .header-gundo .header-element a.gogo,
+#header .header-gundo .header-element a.gogo:link,
+#header .header-gundo .header-element a.gogo:visited {
+  font-size: 17px !important;
   font-weight: 700 !important;
-  color: #ddd !important;
+  color: #f7931a !important;
   padding-bottom: 3px !important;
   border-bottom: 2px solid transparent !important;
   transition: color 0.15s, border-color 0.15s !important;
+  letter-spacing: 0.2px !important;
+}
+#header .header-gundo .header-element a.gogo:hover {
+  color: #ffb347 !important;
+  border-bottom-color: #f7931a66 !important;
+  text-decoration: none !important;
 }
 #header .header-gundo .header-element a.gogo:hover {
   color: #f7931a !important;
