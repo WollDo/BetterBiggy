@@ -1,0 +1,430 @@
+/* ============================================================
+   BetterBiggy — full visual overhaul
+   ============================================================ */
+
+/* ── Reset & base ─────────────────────────────────────────── */
+*, *::before, *::after {
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+}
+
+html, body {
+  background: #0d0d0d !important;
+  color: #c8c8c8 !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif !important;
+  font-size: 14px !important;
+}
+
+/* ── Kill ALL blue — site uses several shades ─────────────── */
+* {
+  --blue: #f7931a;
+}
+
+a, a:link, a:visited,
+.gogo, a.gogo, a.gogo:link, a.gogo:visited,
+.voteButton, .selection,
+[style*="color: #056899"],
+[style*="color:#056899"],
+[style*="color: #2faedf"],
+[style*="color:#2faedf"] {
+  color: #f7931a !important;
+}
+
+a:hover, a:focus,
+.gogo:hover,
+a.gogo:hover {
+  color: #ffb347 !important;
+  text-decoration: underline;
+}
+
+/* catch blue that slips through inline styles */
+[class*="jumping-dots"] { color: #f7931a !important; }
+
+/* ── Header ───────────────────────────────────────────────── */
+#header {
+  background: #0d0d0d !important;
+  border-bottom: 1px solid #1e1e1e !important;
+  box-shadow: none !important;
+  padding: 10px 0 10px !important;
+  margin-bottom: 0 !important;
+}
+
+#header .gogo,
+#header a,
+#header a:link,
+#header a:visited {
+  color: #f7931a !important;
+}
+
+#header .gomo {
+  background: #0d0d0d !important;
+  color: #888 !important;
+}
+
+#header .gone2, #header a.gone2:link {
+  background: #f7931a !important;
+  color: #000 !important;
+  border-radius: 4px !important;
+  padding: 1px 6px !important;
+  font-size: 11px !important;
+}
+
+/* header layout — tighten up the rows */
+.header-primo .header-element,
+.header-gundo .header-element,
+.header-trin .header-element {
+  padding-right: 18px !important;
+}
+
+/* nav tabs: topics / people / items — shrink the enormous font */
+.header-gundo .Bp0,
+.header-trin .Bp0 {
+  font-size: 1rem !important;
+}
+
+/* filter row */
+.header-trin .Bp1,
+.header-trin .Bp2 {
+  font-size: 0.85rem !important;
+}
+
+/* left sidebar (thermo / chats / orders) */
+#header .leroy,
+.header-primo.leroy {
+  color: #555 !important;
+}
+
+/* ── Page body ────────────────────────────────────────────── */
+#content, #wonderwall {
+  background: #0d0d0d !important;
+}
+
+.page {
+  color: #c0c0c0 !important;
+}
+
+/* count line: "989 items / 100 sellers" */
+.page > .Bp0,
+.page > .Bp1 {
+  color: #888 !important;
+}
+
+/* ── Sidebar / leroy column ───────────────────────────────── */
+.leroy {
+  color: #555 !important;
+}
+
+/* ── Item cards ───────────────────────────────────────────── */
+[class*="wall_item-container"] {
+  background: #111 !important;
+  border: 1px solid #1c1c1c !important;
+  border-radius: 10px !important;
+  overflow: hidden !important;
+  margin-bottom: 2px !important;
+  transition: border-color 0.15s !important;
+}
+
+[class*="wall_item-container"]:hover {
+  border-color: #2a2a2a !important;
+}
+
+/* item title */
+[class*="wall_item-header"] a.gogo {
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  color: #e0e0e0 !important;
+  line-height: 1.4 !important;
+}
+
+[class*="wall_item-header"] a.gogo:hover {
+  color: #f7931a !important;
+}
+
+/* rating row */
+[class*="wall_item-header"] .Bp1 {
+  font-size: 0.78rem !important;
+  color: #555 !important;
+}
+
+[class*="wall_item-header"] a[href*="reviews"] span:first-child {
+  color: #f7931a !important;
+  font-weight: 700 !important;
+}
+
+/* description text */
+[class*="wall_item-body"] .Bp3 {
+  color: #666 !important;
+  font-size: 0.82rem !important;
+  line-height: 1.55 !important;
+}
+
+/* read more link */
+[class*="wall_item-body"] a.gogo {
+  color: #f7931a !important;
+  font-size: 0.78rem !important;
+}
+
+/* seller + shipping row */
+[class*="wall_seller-container"] {
+  color: #555 !important;
+  border-top: 1px solid #161616 !important;
+  font-size: 0.8rem !important;
+}
+
+[class*="wall_seller-container"] a {
+  color: #f7931a !important;
+  font-weight: 600 !important;
+}
+
+[class*="wall_shipment-details"] span {
+  color: #404040 !important;
+  font-size: 0.75rem !important;
+}
+
+/* ── Prices ───────────────────────────────────────────────── */
+span.price.USD {
+  color: #f7931a !important;
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+}
+
+span.price.BTC {
+  color: #555 !important;
+  font-size: 0.78rem !important;
+}
+
+span.currencySymbol {
+  opacity: 0.65;
+}
+
+/* ── Variety rows ─────────────────────────────────────────── */
+[class*="wall_item-varieties"] {
+  border-top: 1px solid #161616 !important;
+}
+
+[data-first-variety], [data-first-variety="false"] {
+  border-bottom: 1px solid #141414 !important;
+  padding: 6px 0 !important;
+}
+
+/* ── Buy button ───────────────────────────────────────────── */
+[class*="wall_item-varieties"] button.gogo,
+[class*="button_button"].gogo {
+  color: #f7931a !important;
+  border: 1px solid #f7931a44 !important;
+  border-radius: 5px !important;
+  padding: 3px 10px !important;
+  font-size: 0.78rem !important;
+  background: transparent !important;
+  transition: background 0.15s, border-color 0.15s !important;
+  text-decoration: none !important;
+}
+
+[class*="wall_item-varieties"] button.gogo:hover,
+[class*="button_button"].gogo:hover {
+  background: #f7931a11 !important;
+  border-color: #f7931a88 !important;
+  text-decoration: none !important;
+}
+
+/* ── Accordion "X more varieties" ────────────────────────── */
+[class*="wall_accordion-btn"] {
+  border-top: 1px solid #141414 !important;
+}
+
+[class*="wall_accordion-btn"] button.gogo {
+  color: #444 !important;
+  border-color: #252525 !important;
+  font-size: 0.75rem !important;
+}
+
+[class*="wall_accordion-btn"] button.gogo:hover {
+  color: #f7931a !important;
+  border-color: #f7931a33 !important;
+}
+
+/* ── Image containers ─────────────────────────────────────── */
+[class*="wall_image-container"],
+[class*="image_container"] {
+  background: #0a0a0a !important;
+  border-radius: 6px !important;
+  overflow: hidden !important;
+}
+
+/* ── Filter bar ───────────────────────────────────────────── */
+[class*="filters_button-filters"] {
+  gap: 8px !important;
+}
+
+[class*="filters_button-filters"] button,
+[class*="filters_keyword-search"] input {
+  background: #141414 !important;
+  color: #888 !important;
+  border: 1px solid #222 !important;
+  border-radius: 5px !important;
+  padding: 4px 10px !important;
+  font-size: 0.8rem !important;
+}
+
+[class*="filters_keyword-search"] input:focus,
+[class*="filters_button-filters"] button:hover {
+  border-color: #f7931a33 !important;
+  color: #f7931a !important;
+}
+
+/* ── Dropdowns (ships to etc) ─────────────────────────────── */
+[class*="dropdown_dropdown"] {
+  background: #111 !important;
+  border: 1px solid #222 !important;
+  border-radius: 6px !important;
+  overflow: hidden !important;
+}
+
+[class*="dropdown_item"] {
+  color: #aaa !important;
+  font-size: 0.82rem !important;
+}
+
+[class*="dropdown_item"]:hover {
+  background: #1a1a1a !important;
+  color: #f7931a !important;
+}
+
+[class*="dropdown_item"][data-is-selected=true] {
+  background: #f7931a !important;
+  color: #000 !important;
+}
+
+/* ── Inputs globally ──────────────────────────────────────── */
+input, textarea, select {
+  background: #141414 !important;
+  border-color: #222 !important;
+  color: #d0d0d0 !important;
+  border-radius: 5px !important;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: #f7931a33 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px #f7931a0d !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: #383838 !important;
+}
+
+/* ── Modals ───────────────────────────────────────────────── */
+[class*="modal_modal"] {
+  background: rgba(0,0,0,0.92) !important;
+}
+
+[class*="modal_header"] {
+  background: #0f0f0f !important;
+  border-bottom: 1px solid #1e1e1e !important;
+  color: #ccc !important;
+}
+
+/* ── Misc ─────────────────────────────────────────────────── */
+.gone2, a.gone2:link {
+  background: #f7931a !important;
+  color: #000 !important;
+  border-radius: 4px !important;
+}
+
+.hint, .greyTrast {
+  color: #444 !important;
+}
+
+/* select2 */
+.select2-container .select2-choice,
+.select2-drop {
+  background: #111 !important;
+  border-color: #222 !important;
+  color: #ccc !important;
+  border-radius: 6px !important;
+}
+
+.select2-results .select2-highlighted {
+  background: #f7931a !important;
+  color: #000 !important;
+}
+
+/* ── Scrollbar ────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: #0d0d0d; }
+::-webkit-scrollbar-thumb { background: #1e1e1e; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #2a2a2a; }
+/* ── Font scale fix ───────────────────────────────────────── */
+/* Site uses html{font-size:44.5%} making 1rem=7px, so 6.6rem=~47px.
+   Override all Bp classes to sensible fixed sizes. */
+.Bp0 { font-size: 18px !important; font-weight: 600 !important; }
+.Bp1 { font-size: 15px !important; }
+.Bp2 { font-size: 14px !important; }
+.Bp3 { font-size: 13px !important; }
+.Bp4 { font-size: 13px !important; }
+.Bp5 { font-size: 12px !important; }
+.Bp9 { font-size: 11px !important; }
+
+/* item count info (989 items / 100 sellers) */
+[class*="wall_counter-info"] .Bp0,
+[class*="wall_counter-info"] .Bp1 {
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  color: #555 !important;
+}
+
+/* ships-to selector */
+[class*="filters_ships-to"] .Bp1,
+[class*="filters_ships-to"] .Bp0 {
+  font-size: 13px !important;
+}
+/* ── Spacing fixes ────────────────────────────────────────── */
+
+/* kill the massive gap below "989 items / 100 sellers" */
+[class*="wall_counter-info-container"] {
+  margin-bottom: 12px !important;
+}
+
+/* tighten gap between items in the virtual list */
+[class*="wall_items-list"] [data-testid="virtuoso-item-list"] {
+  gap: 10px !important;
+}
+
+/* reduce header bottom margin */
+#header {
+  margin-bottom: 0 !important;
+  padding-bottom: 6px !important;
+}
+
+/* tighten spacing between header rows */
+.header-gundo, .header-trin {
+  margin-top: 0 !important;
+}
+
+/* "989 items / 100 sellers" — shrink and mute */
+[class*="wall_counter-info-container"] .Bp0,
+[class*="wall_counter-info-container"] .Bp1,
+[class*="wall_counter-info-container"] .Bp2 {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  color: #444 !important;
+  line-height: 1.6 !important;
+}
+
+/* widen the content column to use more screen */
+.page {
+  max-width: 1100px !important;
+  width: 100% !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+
+/* tighten padding inside item cards */
+[class*="wall_item-container"] {
+  padding: 12px 14px !important;
+}
+
+/* reduce gap between item image and content */
+[class*="wall_image-container"] {
+  margin-bottom: 6px !important;
+}

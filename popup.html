@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: 320px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0d0d0d;
+      color: #e8e8e8;
+      overflow: hidden;
+    }
+
+    /* ── Progress strip ─────────────────────────────── */
+    #progressStrip {
+      height: 2px;
+      background: #161616;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    #progressStrip.visible { opacity: 1; }
+    #progressFill {
+      position: absolute;
+      top: 0; left: 0;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #f7931a, #ffb84d);
+      transition: width 0.18s ease;
+    }
+
+    /* ── Header ─────────────────────────────────────── */
+    .header {
+      padding: 13px 15px 11px;
+      border-bottom: 1px solid #191919;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 11px;
+    }
+
+    .logo {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .logo .l1 { color: #f7931a; }
+    .logo .l2 { color: #fff; font-weight: 700; }
+    .logo .l3 { color: #f7931a; }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .freshness {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .f-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #2e2e2e;
+    }
+    .f-dot.fresh  { background: #46a758; }
+    .f-dot.stale  { background: #e07b24; }
+    .f-dot.old    { background: #c04040; }
+
+    .f-label {
+      font-size: 10px;
+      color: #3a3a3a;
+    }
+
+    .settings-btn {
+      font-size: 10px;
+      color: #3a3a3a;
+      cursor: pointer;
+      text-decoration: none;
+      transition: color 0.15s;
+      letter-spacing: 0.2px;
+    }
+    .settings-btn:hover { color: #f7931a; }
+
+    /* rates row */
+    .rates-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+
+    .btc-block {}
+
+    .btc-price {
+      font-size: 21px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+
+    .btc-denom {
+      font-size: 10px;
+      color: #333;
+      margin-left: 3px;
+    }
+
+    .sel-block {
+      text-align: right;
+    }
+
+    .sel-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: #f7931a;
+      display: block;
+    }
+
+    .sel-label {
+      font-size: 9px;
+      color: #2e2e2e;
+      letter-spacing: 0.3px;
+    }
+
+    /* ── Search ─────────────────────────────────────── */
+    .search-wrap {
+      padding: 9px 12px;
+      border-bottom: 1px solid #161616;
+    }
+
+    .search-wrap input {
+      width: 100%;
+      padding: 7px 10px;
+      background: #161616;
+      border: 1px solid #222;
+      border-radius: 6px;
+      color: #e0e0e0;
+      font-size: 12px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .search-wrap input:focus { border-color: #f7931a33; }
+    .search-wrap input::placeholder { color: #333; }
+
+    /* ── Currency list ───────────────────────────────── */
+    #currencyList {
+      max-height: 270px;
+      overflow-y: auto;
+    }
+
+    #currencyList::-webkit-scrollbar { width: 3px; }
+    #currencyList::-webkit-scrollbar-track { background: transparent; }
+    #currencyList::-webkit-scrollbar-thumb { background: #1e1e1e; border-radius: 2px; }
+
+    .sec-head {
+      padding: 8px 14px 3px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.9px;
+      text-transform: uppercase;
+      color: #2e2e2e;
+    }
+
+    .sec-div {
+      height: 1px;
+      background: #161616;
+      margin: 4px 0 2px;
+    }
+
+    .c-item {
+      display: grid;
+      grid-template-columns: 40px 1fr auto;
+      align-items: center;
+      padding: 7px 14px;
+      cursor: pointer;
+      transition: background 0.1s;
+      gap: 6px;
+    }
+    .c-item:hover { background: #131313; }
+    .c-item.active {
+      background: #130f00;
+      border-left: 2px solid #f7931a;
+      padding-left: 12px;
+    }
+
+    .c-code {
+      font-size: 12px;
+      font-weight: 600;
+      color: #888;
+    }
+    .c-item.active .c-code { color: #f7931a; }
+
+    .c-name {
+      font-size: 11px;
+      color: #383838;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .c-val {
+      font-size: 11px;
+      color: #2e2e2e;
+      text-align: right;
+      white-space: nowrap;
+    }
+    .c-item.active .c-val { color: #f7931a55; }
+
+    .no-results {
+      padding: 24px;
+      text-align: center;
+      color: #2e2e2e;
+      font-size: 12px;
+    }
+
+    .list-loading {
+      padding: 28px;
+      text-align: center;
+      color: #2e2e2e;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div id="progressStrip"><div id="progressFill"></div></div>
+
+  <div class="header">
+    <div class="header-top">
+      <div class="logo"><span class="l1">Better</span><span class="l2">Biggy</span></div>
+      <div class="header-right">
+        <div class="freshness">
+          <div class="f-dot" id="fDot"></div>
+          <span class="f-label" id="fLabel"></span>
+        </div>
+        <a class="settings-btn" id="openOptions">Settings</a>
+      </div>
+    </div>
+    <div class="rates-row">
+      <div class="btc-block">
+        <span class="btc-price" id="btcPrice">—</span>
+        <span class="btc-denom">USD / BTC</span>
+      </div>
+      <div class="sel-block" id="selBlock" style="display:none">
+        <span class="sel-value" id="selValue">—</span>
+        <span class="sel-label" id="selLabel">—</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="search-wrap">
+    <input type="text" id="search" placeholder="Search currencies…" autocomplete="off" spellcheck="false">
+  </div>
+
+  <div id="currencyList"><div class="list-loading">Loading…</div></div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

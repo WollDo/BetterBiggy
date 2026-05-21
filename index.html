@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BetterBiggy — LittleBiggy Mod</title>
+  <meta name="description" content="BetterBiggy is a free browser extension that enhances LittleBiggy with a dark theme, local currency conversion, and quality-of-life improvements.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --orange: #f7931a;
+      --bg:     #0a0a0a;
+      --bg2:    #0f0f0f;
+      --bg3:    #141414;
+      --border: #1e1e1e;
+      --text:   #e0e0e0;
+      --muted:  #555;
+      --dim:    #2e2e2e;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a { color: var(--orange); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Nav ───────────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: #0a0a0acc;
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 52px;
+    }
+
+    .nav-logo {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+    .nav-logo .accent { color: var(--orange); }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      font-size: 13px;
+    }
+    .nav-links a { color: var(--muted); transition: color 0.15s; }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+
+    /* ── Hero ──────────────────────────────────────────────── */
+    .hero {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 100px 32px 80px;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.4px;
+      margin-bottom: 28px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: clamp(40px, 6vw, 62px);
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -2px;
+      line-height: 1.05;
+      margin-bottom: 22px;
+    }
+    h1 .accent { color: var(--orange); }
+
+    .hero-sub {
+      font-size: 17px;
+      color: var(--muted);
+      max-width: 500px;
+      margin: 0 auto 44px;
+      line-height: 1.75;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--orange);
+      color: #000;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 12px 24px;
+      border-radius: 8px;
+      transition: opacity 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.85; text-decoration: none; }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: none;
+      color: var(--muted);
+      font-size: 14px;
+      padding: 12px 24px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      transition: all 0.15s;
+    }
+    .btn-secondary:hover { border-color: var(--dim); color: var(--text); text-decoration: none; }
+
+    /* ── Divider ───────────────────────────────────────────── */
+    .divider { border: none; border-top: 1px solid var(--border); margin: 0 32px; }
+
+    /* ── Section ───────────────────────────────────────────── */
+    .section {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 80px 32px;
+    }
+
+    .section-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 10px;
+    }
+
+    .section h2 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.5px;
+      margin-bottom: 10px;
+    }
+
+    .section-sub {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 44px;
+      max-width: 520px;
+    }
+
+    /* ── Feature grid ──────────────────────────────────────── */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 12px;
+    }
+
+    .feature {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      transition: border-color 0.15s;
+    }
+    .feature:hover { border-color: var(--dim); }
+
+    .feature-icon {
+      font-size: 24px;
+      margin-bottom: 14px;
+      display: block;
+    }
+
+    .feature h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 7px;
+    }
+
+    .feature p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ── Install steps ─────────────────────────────────────── */
+    .steps { display: flex; flex-direction: column; }
+
+    .step {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 16px;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .step:last-child { border-bottom: none; }
+
+    .step-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--orange);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .step h3 {
+      font-size: 15px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 5px;
+    }
+
+    .step p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+    .code {
+      display: inline-block;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 7px;
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 12px;
+      color: var(--orange);
+    }
+
+    /* ── Footer ────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--dim);
+    }
+    footer a { color: var(--dim); }
+    footer a:hover { color: var(--muted); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-logo"><span class="accent">Better</span>Biggy</div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#install">Install</a>
+      <a href="https://github.com/YOUR_USERNAME/YOUR_REPO" target="_blank">GitHub</a>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <div class="badge">Chrome Extension &mdash; Free &amp; Open Source</div>
+    <h1>LittleBiggy,<br><span class="accent">the way it should be</span></h1>
+    <p class="hero-sub">
+      BetterBiggy is a browser extension that overhauls the LittleBiggy experience &mdash; dark theme, live currency conversion, and quality-of-life fixes baked in.
+    </p>
+    <div class="hero-actions">
+      <a class="btn-primary" href="https://github.com/YOUR_USERNAME/YOUR_REPO/archive/refs/heads/main.zip">
+        &#8595;&nbsp; Download
+      </a>
+      <a class="btn-secondary" href="#install">How to install</a>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section" id="features">
+    <div class="section-label">What it does</div>
+    <h2>Everything you wished the site had</h2>
+    <p class="section-sub">BetterBiggy layers on top of LittleBiggy without touching your account or data. Just load it and the site improves.</p>
+
+    <div class="features">
+      <div class="feature">
+        <span class="feature-icon">&#127769;</span>
+        <h3>Dark theme</h3>
+        <p>Full site overhaul &mdash; dark backgrounds, readable typography, consistent orange accents throughout.</p>
+      </div>
+      <div class="feature">
+        <span class="feature-icon">&#x20BF;</span>
+        <h3>Currency conversion</h3>
+        <p>BTC prices converted to your local currency in real time using live rates from CoinGecko and Frankfurter. 30+ currencies supported.</p>
+      </div>
+      <div class="feature">
+        <span class="feature-icon">&#9889;</span>
+        <h3>Works as you scroll</h3>
+        <p>Prices convert as new listings load on the infinite scroll listing pages &mdash; nothing slips through.</p>
+      </div>
+      <div class="feature">
+        <span class="feature-icon">&#128269;</span>
+        <h3>Better search</h3>
+        <p>Click directly on the keyword search box without having to click the button first. Small thing, big difference.</p>
+      </div>
+      <div class="feature">
+        <span class="feature-icon">&#128274;</span>
+        <h3>No data collected</h3>
+        <p>Runs entirely in your browser. No accounts, no tracking, no requests to any server except live rate APIs.</p>
+      </div>
+      <div class="feature">
+        <span class="feature-icon">&#128313;</span>
+        <h3>Open source</h3>
+        <p>All code is public on GitHub. Read it, fork it, suggest features &mdash; it&apos;s yours to inspect and build on.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section" id="install">
+    <div class="section-label">Installation</div>
+    <h2>Up in under a minute</h2>
+    <p class="section-sub">Chrome doesn&apos;t allow free extensions outside the store, so you load it manually. It&apos;s a one-time thing.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div>
+          <h3>Download the extension</h3>
+          <p>Click the download button above, or go to the GitHub repo and hit <strong>Code &rarr; Download ZIP</strong>.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div>
+          <h3>Extract the ZIP</h3>
+          <p>Unzip the downloaded file anywhere on your machine.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div>
+          <h3>Enable developer mode in Chrome</h3>
+          <p>Go to <span class="code">chrome://extensions</span> and toggle <strong>Developer mode</strong> on in the top right corner.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div>
+          <h3>Load the folder</h3>
+          <p>Click <strong>Load unpacked</strong> and select the extracted folder. BetterBiggy will appear in your extensions list immediately.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div>
+          <h3>Pin it and pick your currency</h3>
+          <p>Click the puzzle piece icon in the Chrome toolbar, pin BetterBiggy, then open it and choose your local currency. Done.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span>BetterBiggy &mdash; open source, free forever</span>
+    <a href="https://github.com/YOUR_USERNAME/YOUR_REPO" target="_blank">View on GitHub &rarr;</a>
+  </footer>
+
+</body>
+</html>

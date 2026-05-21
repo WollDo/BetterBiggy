@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>BetterBiggy</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0a0a0a;
+      color: #e0e0e0;
+      min-height: 100vh;
+    }
+
+    .page {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 44px 28px 72px;
+    }
+
+    /* â”€â”€ Page header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 36px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid #141414;
+    }
+
+    .title-block {}
+
+    .page-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 5px;
+      letter-spacing: -0.3px;
+    }
+
+    .page-title .accent { color: #f7931a; }
+
+    .page-sub {
+      font-size: 12px;
+      color: #3a3a3a;
+      line-height: 1.5;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .stat-card {
+      background: #0f0f0f;
+      border: 1px solid #1c1c1c;
+      border-radius: 10px;
+      padding: 12px 18px;
+      text-align: right;
+      min-width: 120px;
+    }
+
+    .stat-label {
+      font-size: 9px;
+      color: #333;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      margin-bottom: 5px;
+    }
+
+    .stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: #f7931a;
+      letter-spacing: -0.5px;
+    }
+
+    .stat-sub {
+      font-size: 10px;
+      color: #2a2a2a;
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 4px;
+    }
+
+    .f-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: #252525;
+    }
+    .f-dot.fresh { background: #46a758; }
+    .f-dot.stale { background: #e07b24; }
+    .f-dot.old   { background: #c04040; }
+
+    .refresh-btn {
+      align-self: flex-end;
+      background: none;
+      border: 1px solid #1e1e1e;
+      color: #3a3a3a;
+      padding: 7px 13px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 11px;
+      transition: all 0.15s;
+      white-space: nowrap;
+      height: fit-content;
+    }
+    .refresh-btn:hover:not(:disabled) { border-color: #f7931a33; color: #f7931a; }
+    .refresh-btn:disabled { opacity: 0.3; cursor: default; }
+
+    /* â”€â”€ Search â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    .search-row {
+      margin-bottom: 22px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 14px;
+      background: #0f0f0f;
+      border: 1px solid #1c1c1c;
+      border-radius: 8px;
+      color: #e0e0e0;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .search-input:focus { border-color: #f7931a2a; }
+    .search-input::placeholder { color: #2e2e2e; }
+
+    /* â”€â”€ Section labels â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    .sec-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.9px;
+      text-transform: uppercase;
+      color: #2e2e2e;
+      margin-bottom: 10px;
+    }
+
+    /* â”€â”€ Pinned cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    .pinned-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+
+    .pinned-card {
+      background: #0f0f0f;
+      border: 1px solid #1c1c1c;
+      border-radius: 10px;
+      padding: 16px 18px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .pinned-card:hover { background: #131313; border-color: #242424; }
+    .pinned-card.active { background: #130f00; border-color: #f7931a2a; }
+
+    .p-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 6px;
+    }
+
+    .p-code {
+      font-size: 18px;
+      font-weight: 700;
+      color: #aaa;
+    }
+    .pinned-card.active .p-code { color: #f7931a; }
+
+    .p-symbol {
+      font-size: 15px;
+      color: #1e1e1e;
+      line-height: 1;
+      margin-top: 2px;
+    }
+    .pinned-card.active .p-symbol { color: #f7931a2a; }
+
+    .p-name {
+      font-size: 11px;
+      color: #383838;
+      margin-bottom: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .p-rate {
+      font-size: 14px;
+      font-weight: 600;
+      color: #252525;
+    }
+    .pinned-card.active .p-rate { color: #f7931a99; }
+
+    .p-rate-label {
+      font-size: 9px;
+      color: #1e1e1e;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+    .pinned-card.active .p-rate-label { color: #f7931a33; }
+
+    /* â”€â”€ Currency grid â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 5px;
+    }
+
+    .c-card {
+      background: #0c0c0c;
+      border: 1px solid #161616;
+      border-radius: 8px;
+      padding: 10px 13px;
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+    .c-card:hover { background: #111; border-color: #1e1e1e; }
+    .c-card.active { background: #110e00; border-color: #f7931a1a; }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2px;
+    }
+
+    .card-code {
+      font-size: 13px;
+      font-weight: 700;
+      color: #666;
+    }
+    .c-card.active .card-code { color: #f7931a; }
+
+    .card-sym {
+      font-size: 12px;
+      color: #1e1e1e;
+    }
+    .c-card.active .card-sym { color: #f7931a2a; }
+
+    .card-name {
+      font-size: 10px;
+      color: #303030;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-rate {
+      font-size: 10px;
+      color: #222;
+      margin-top: 5px;
+    }
+    .c-card.active .card-rate { color: #f7931a55; }
+
+    .no-results {
+      grid-column: 1 / -1;
+      padding: 48px;
+      text-align: center;
+      color: #2a2a2a;
+      font-size: 13px;
+    }
+
+    .grid-loading {
+      grid-column: 1 / -1;
+      padding: 48px;
+      text-align: center;
+      color: #2a2a2a;
+      font-size: 13px;
+    }
+
+    /* â”€â”€ Status bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    .status-bar {
+      margin-top: 28px;
+      padding: 10px 16px;
+      background: #0c0c0c;
+      border: 1px solid #161616;
+      border-radius: 8px;
+      font-size: 12px;
+      color: #3a3a3a;
+    }
+    .status-bar strong { color: #f7931a; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="page-header">
+      <div class="title-block">
+        <div class="page-title"><span class="accent">&#x20BF;</span> BetterBiggy</div>
+        <div class="page-sub">Select a currency â€” prices on LittleBiggy will be converted from BTC using live rates.</div>
+      </div>
+      <div class="header-controls">
+        <div class="stat-card">
+          <div class="stat-label">BTC / USD</div>
+          <div class="stat-value" id="btcPrice">â€”</div>
+          <div class="stat-sub">
+            <div class="f-dot" id="fDot"></div>
+            <span id="lastUpdated">â€”</span>
+          </div>
+        </div>
+        <button class="refresh-btn" id="refreshBtn">&#x21BB; Refresh rates</button>
+      </div>
+    </div>
+
+    <div class="search-row">
+      <input type="text" class="search-input" id="search" placeholder="Search by code or nameâ€¦" autocomplete="off" spellcheck="false">
+    </div>
+
+    <div id="pinnedSection">
+      <div class="sec-label">Popular</div>
+      <div class="pinned-row" id="pinnedRow"></div>
+    </div>
+
+    <div class="sec-label" id="gridLabel">All currencies</div>
+    <div class="grid" id="grid">
+      <div class="grid-loading">Loading currenciesâ€¦</div>
+    </div>
+
+    <div class="status-bar" id="statusBar">No currency selected</div>
+
+  </div>
+  <script src="options.js"></script>
+</body>
+</html>

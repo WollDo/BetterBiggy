@@ -1,0 +1,73 @@
+{
+  "manifest_version": 3,
+  "name": "BetterBiggy",
+  "version": "2.1",
+  "description": "A utility mod for LittleBiggy. Dark theme, currency conversion, and more.",
+  "permissions": ["storage", "alarms"],
+  "host_permissions": [
+    "https://littlebiggy.org/*",
+    "https://www.littlebiggy.org/*",
+    "https://littlebiggy.net/*",
+    "https://www.littlebiggy.net/*",
+    "https://littlebiggy.com/*",
+    "https://www.littlebiggy.com/*",
+    "https://littlebiggy.eth.link/*",
+    "https://www.littlebiggy.eth.link/*",
+    "https://api.frankfurter.app/*",
+    "https://api.coingecko.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://littlebiggy.org/*",
+        "https://www.littlebiggy.org/*",
+        "https://littlebiggy.net/*",
+        "https://www.littlebiggy.net/*",
+        "https://littlebiggy.com/*",
+        "https://www.littlebiggy.com/*",
+        "https://littlebiggy.eth.link/*",
+        "https://www.littlebiggy.eth.link/*"
+      ],
+      "js": ["theme.js"],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "https://littlebiggy.org/*",
+        "https://www.littlebiggy.org/*",
+        "https://littlebiggy.net/*",
+        "https://www.littlebiggy.net/*",
+        "https://littlebiggy.com/*",
+        "https://www.littlebiggy.com/*",
+        "https://littlebiggy.eth.link/*",
+        "https://www.littlebiggy.eth.link/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [{
+    "resources": ["betterbiggy.css"],
+    "matches": [
+      "https://littlebiggy.org/*",
+      "https://www.littlebiggy.org/*",
+      "https://littlebiggy.net/*",
+      "https://www.littlebiggy.net/*",
+      "https://littlebiggy.com/*",
+      "https://www.littlebiggy.com/*",
+      "https://littlebiggy.eth.link/*",
+      "https://www.littlebiggy.eth.link/*"
+    ]
+  }],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "BetterBiggy"
+  }
+}
