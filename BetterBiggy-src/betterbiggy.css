@@ -354,16 +354,12 @@ input::placeholder, textarea::placeholder {
 ::-webkit-scrollbar-track { background: #0d0d0d; }
 ::-webkit-scrollbar-thumb { background: #1e1e1e; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #2a2a2a; }
-/* ── Font scale fix ───────────────────────────────────────── */
-/* Site uses html{font-size:44.5%} making 1rem=7px, so 6.6rem=~47px.
-   Override all Bp classes to sensible fixed sizes. */
-.Bp0 { font-size: 18px !important; font-weight: 600 !important; }
-.Bp1 { font-size: 15px !important; }
-.Bp2 { font-size: 14px !important; }
-.Bp3 { font-size: 13px !important; }
-.Bp4 { font-size: 13px !important; }
-.Bp5 { font-size: 12px !important; }
-.Bp9 { font-size: 11px !important; }
+.Bp1 { font-size: 12px !important; }
+.Bp2 { font-size: 11px !important; }
+.Bp3 { font-size: 11px !important; }
+.Bp4 { font-size: 10px !important; }
+.Bp5 { font-size: 10px !important; }
+.Bp9 { font-size: 9px !important; }
 
 /* item count info (989 items / 100 sellers) */
 [class*="wall_counter-info"] .Bp0,
@@ -454,3 +450,70 @@ input::placeholder, textarea::placeholder {
 .reginald .Bp3 {
   color: #c0c0c0 !important;
 }
+#header .Bp1 { font-size: 13px !important; }
+#header .Bp2 { font-size: 12px !important; }
+#header .Bp3 { font-size: 11px !important; }
+#header .Bp4 { font-size: 11px !important; }
+#header .Bp5 { font-size: 10px !important; }
+
+/* Kill blue/teal on non-header pages */
+a[style*="color: rgb(2"], a[style*="color:rgb(2"],
+a[style*="color: #0"], a[style*="color:#0"],
+[style*="color: rgb(24"], [style*="color:rgb(24"] {
+  color: #f7931a !important;
+}
+
+[class*="wall_"] .Bp1 { font-size: 13px !important; }
+[class*="wall_"] .Bp2 { font-size: 12px !important; }
+[class*="wall_"] .Bp3 { font-size: 12px !important; }
+[class*="wall_"] .Bp4 { font-size: 11px !important; }
+
+/* counter info (1004 items / 97 sellers) */
+[class*="counter-info"] .Bp0,
+[class*="counter-info"] .Bp1 {
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  color: #555 !important;
+}
+
+/* general page Bp classes outside header and wall */
+.page > .Bp0 { font-size: 14px !important; font-weight: 400 !important; }
+.page > .Bp1 { font-size: 13px !important; }
+/* ── Page root font reset (ships-to, item/seller counts) ─── */
+#wonderwall .Bp0,
+#wonderwall .Bp1,
+#wonderwall .Bp2,
+#project-items-wall > .Bp0,
+#project-items-wall > .Bp1 {
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  color: #555 !important;
+}
+/* ── Global font scale fix ────────────────────────────────── */
+/* Site sets html{font-size:44.5%} making 1rem=~7px, Bp0=~47px.
+   Reset html to 100% so rem units work normally everywhere.  */
+html {
+  font-size: 100% !important;
+}
+
+/* Header — keep sensible sizes after rem reset */
+#header .Bp0 { font-size: 13px !important; }
+#header .Bp1 { font-size: 12px !important; }
+#header .Bp2 { font-size: 11px !important; }
+#header .Bp4 { font-size: 11px !important; }
+#header .Bp5 { font-size: 10px !important; }
+
+/* Country filter input */
+#items-country-filter input { font-size: 12px !important; }
+
+/* Item/seller count */
+#items-quick-info .Bp0 { font-size: 13px !important; font-weight: 400 !important; color: #555 !important; }
+
+/* Item wall titles */
+[class*="wall_item-header"] a.Bp0 { font-size: 14px !important; font-weight: 600 !important; }
+[class*="wall_item-header"] .Bp1  { font-size: 12px !important; }
+[class*="wall_item-body"] .Bp3    { font-size: 12px !important; }
+[class*="wall_seller-container"]  { font-size: 12px !important; }
+[class*="wall_seller-container"] .Bp2 { font-size: 11px !important; }
+[class*="wall_item-varieties"] .Bp1   { font-size: 12px !important; }
+[class*="wall_accordion-btn"] .Bp2    { font-size: 11px !important; }
