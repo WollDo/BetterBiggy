@@ -19,13 +19,13 @@
   "content_scripts": [
     {
       "matches": ["https://littlebiggy.org/*","https://www.littlebiggy.org/*","https://littlebiggy.net/*","https://www.littlebiggy.net/*","https://littlebiggy.com/*","https://www.littlebiggy.com/*","https://littlebiggy.eth.link/*","https://www.littlebiggy.eth.link/*"],
-      "js": ["theme-early.js"],
+      "js": ["theme.js"],
       "run_at": "document_start"
     },
     {
       "matches": ["https://littlebiggy.org/*","https://www.littlebiggy.org/*","https://littlebiggy.net/*","https://www.littlebiggy.net/*","https://littlebiggy.com/*","https://www.littlebiggy.com/*","https://littlebiggy.eth.link/*","https://www.littlebiggy.eth.link/*"],
       "css": ["betterbiggy.css"],
-      "js": ["theme-toggle.js"],
+      "js": ["theme.js"],
       "run_at": "document_end"
     },
     {
@@ -35,7 +35,7 @@
     }
   ],
   "web_accessible_resources": [{
-    "resources": ["betterbiggy.css"],
+    "resources": ["betterbiggy.css", "onboarding.html", "onboarding.js"],
     "matches": ["https://littlebiggy.org/*","https://www.littlebiggy.org/*","https://littlebiggy.net/*","https://www.littlebiggy.net/*","https://littlebiggy.com/*","https://www.littlebiggy.com/*","https://littlebiggy.eth.link/*","https://www.littlebiggy.eth.link/*"]
   }],
   "background": { "service_worker": "background.js" },

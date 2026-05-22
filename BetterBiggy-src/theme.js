@@ -1,10 +1,28 @@
+// theme.js — runs at document_start (early) and document_end (toggle+imagesize)
+// Split into two self-invoking blocks so Chrome can run this file at both stages.
+
+// BLOCK 1: document_start — instant dark background to prevent white flash
 (function() {
-  // Find the manifest-injected betterbiggy.css stylesheet and toggle it
+  var s = document.createElement('style');
+  s.id = 'bb-early';
+  s.textContent = 'html,body{background:#0d0d0d!important;color:#c8c8c8!important}' +
+    '#header{background:#0d0d0d!important}#content,#wonderwall{background:#0d0d0d!important}';
+  (document.head || document.documentElement).appendChild(s);
+  chrome.storage.local.get('darkMode', function(data) {
+    if (data.darkMode === false) {
+      var el = document.getElementById('bb-early');
+      if (el) el.remove();
+    }
+  });
+})();
+
+// BLOCK 2: dark/light toggle + image size (runs at document_end)
+(function() {
   function getSheet() {
     for (var i = 0; i < document.styleSheets.length; i++) {
       try {
-        var href = document.styleSheets[i].href || '';
-        if (href.includes('betterbiggy.css')) return document.styleSheets[i];
+        if ((document.styleSheets[i].href || '').includes('betterbiggy.css'))
+          return document.styleSheets[i];
       } catch(e) {}
     }
     return null;
@@ -13,7 +31,6 @@
   function setDark(isDark) {
     var sheet = getSheet();
     if (sheet) sheet.disabled = !isDark;
-    // Also toggle early style
     var early = document.getElementById('bb-early');
     if (early) early.disabled = !isDark;
   }

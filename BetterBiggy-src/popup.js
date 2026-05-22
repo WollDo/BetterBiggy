@@ -115,8 +115,14 @@ chrome.storage.onChanged.addListener(changes => {
 });
 
 chrome.storage.local.get(
-  ["currencies", "targetCurrency", "btcUsd", "allRates", "lastUpdated", "convProgress", "darkMode"],
+  ["currencies", "targetCurrency", "btcUsd", "allRates", "lastUpdated", "convProgress", "darkMode", "onboarded"],
   data => {
+    // First run — open onboarding page
+    if (!data.onboarded) {
+      chrome.tabs.create({ url: chrome.runtime.getURL("onboarding.html") });
+      window.close();
+      return;
+    }
     allCurrencies  = data.currencies  ?? {};
     targetCurrency = data.targetCurrency ?? null;
     btcUsd         = data.btcUsd     ?? null;

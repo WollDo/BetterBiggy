@@ -9,7 +9,7 @@ const SYMBOLS = {
 const BATCH_SIZE = 100;
 const BATCH_DELAY = 16;
 
-// Cached storage values — no async roundtrip on scroll/mutation
+// Cached storage values -- no async roundtrip on scroll/mutation
 let cachedCurrency = null;
 let cachedBtcUsd   = null;
 let cachedUsdRate  = null;
@@ -138,7 +138,7 @@ function patchSearchInput() {
 patchSearchInput();
 
 // Fix dark inline text colors invisible on dark background
-// Skip <a> tags — those are handled by CSS to keep links orange
+// Skip <a> tags -- those are handled by CSS to keep links orange
 function fixInlineColors() {
   document.querySelectorAll('[style*="color"]:not(a)').forEach(el => {
     const s = el.getAttribute('style') || '';
